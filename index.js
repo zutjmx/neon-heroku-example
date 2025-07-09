@@ -36,6 +36,18 @@ app.get('/coffee', async (req, res) => {
   }
 });
 
+app.get('/clientes', async (req, res) => {
+  try {
+    // Regresa la lista de Clientes
+    // from your database using the postgres connection
+    const { rows } = await pool.query('select * from clientes order by first_name limit 10;');
+    res.json(rows);
+  } catch (error) {
+    console.error('Failed to fetch clientes', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // Start the server
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);

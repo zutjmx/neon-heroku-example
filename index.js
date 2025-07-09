@@ -13,6 +13,9 @@ app.use(express.json());
 const { Pool } = pkg;
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
+const supabaseUrl = process.env.SUPABASE_URL;
+const poolSupabase = new Pool({ connectionString: supabaseUrl });
+
 app.get('/', async (req, res) => {
   try {
     // Fetch the list of music albums from your database using the postgres connection
@@ -41,6 +44,18 @@ app.get('/clientes', async (req, res) => {
     // Regresa la lista de Clientes
     // from your database using the postgres connection
     const { rows } = await pool.query('select * from clientes order by first_name limit 10;');
+    res.json(rows);
+  } catch (error) {
+    console.error('Failed to fetch clientes', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.get('/bebidas', async (req, res) => {
+  try {
+    // Regresa la lista de Bebidas
+    // from your database using the postgres connection
+    const { rows } = await poolSupabase.query('select * from catalogo_bebidas order by name limit 10;');
     res.json(rows);
   } catch (error) {
     console.error('Failed to fetch clientes', error);
